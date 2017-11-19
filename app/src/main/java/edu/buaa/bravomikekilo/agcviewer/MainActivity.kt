@@ -1,10 +1,12 @@
 package edu.buaa.bravomikekilo.agcviewer
 
 import android.app.Activity
+import android.content.ComponentName
+import android.content.Context
 import android.content.Intent
+import android.content.ServiceConnection
 import android.os.Bundle
-import android.os.Handler
-import android.os.Message
+import android.os.IBinder
 import android.view.View
 import kotlinx.android.synthetic.main.activity_main.*
 
@@ -18,8 +20,9 @@ class MainActivity : Activity() {
         setContentView(R.layout.activity_main)
         title = "Main"
         renderCentral()
-        clickMe.setOnClickListener {view -> clicked(view)}
-        showButton.setOnClickListener { view -> jump2Show(view) }
+        clickMe.setOnClickListener {clicked(it)}
+        showButton.setOnClickListener { jump2Show(it) }
+        toggleService.setOnClickListener { toggleService(it) }
 
     }
 
@@ -42,20 +45,41 @@ class MainActivity : Activity() {
     private var clicked = false
     private var serviceState = false
 
+    private var serviceConn = object: ServiceConnection{
+        override fun onServiceConnected(name: ComponentName?, service: IBinder?) {
+            val binder = service as TickService.LocalBinder
+            val mService = binder.getService()
+            mService.addTickListener { UpdateOnTick(it) }
+        }
+
+        override fun onServiceDisconnected(name: ComponentName?) {
+            serviceState = false
+            return Unit // Do nothing by now, because no one care.
+        }
+    }
 
     private fun toggleService(view: View) {
         val intent = Intent(this, TickService::class.java)
         if(!serviceState){
             startService(intent)
+            bindService(intent, serviceConn, Context.BIND_AUTO_CREATE)
+            serviceState = true
         } else {
+            unbindService(serviceConn)
             stopService(intent)
+            serviceState = false
         }
+    }
+
+    private fun UpdateOnTick(tick: Int) {
+        serviceLog.text = tick.toString()
     }
 
     private fun clicked(view: View) {
         clicked = !clicked
         renderCentral()
     }
+
 
 
     private fun renderCentral(){
@@ -71,12 +95,6 @@ class MainActivity : Activity() {
         startActivity(intent)
     }
 
-    inner class handleMessage: Handler() {
-        override fun handleMessage(msg: Message?) {
-            super.handleMessage(msg)
-        }
-
-    }
 
 }
 
