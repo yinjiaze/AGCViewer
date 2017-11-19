@@ -1,3 +1,10 @@
+
+/*
+author: Mingkun Bao/ bravomikekilo bravomikekilo@buaa.edu.cn
+
+MainActivity
+ */
+
 package edu.buaa.bravomikekilo.agcviewer
 
 import android.app.Activity
@@ -6,7 +13,9 @@ import android.content.Context
 import android.content.Intent
 import android.content.ServiceConnection
 import android.os.Bundle
+import android.os.Handler
 import android.os.IBinder
+import android.os.Messenger
 import android.view.View
 import kotlinx.android.synthetic.main.activity_main.*
 
@@ -43,13 +52,23 @@ class MainActivity : Activity() {
 
 
     private var clicked = false
+
+    private var handler: Handler = Handler(Handler.Callback { msg ->
+        serviceLog.text = msg.what.toString()
+        true
+    })
+
+    private var messenger: Messenger = Messenger(handler)
+
+
+
     private var serviceState = false
 
     private var serviceConn = object: ServiceConnection{
         override fun onServiceConnected(name: ComponentName?, service: IBinder?) {
             val binder = service as TickService.LocalBinder
             val mService = binder.getService()
-            mService.addTickListener { UpdateOnTick(it) }
+            mService.addListener(messenger.binder)
         }
 
         override fun onServiceDisconnected(name: ComponentName?) {
