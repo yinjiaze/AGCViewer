@@ -1,12 +1,8 @@
 package edu.buaa.bravomikekilo.agcviewer
 
 import android.content.Context
-import android.content.res.TypedArray
 import android.graphics.Canvas
-import android.graphics.Color
 import android.graphics.Paint
-import android.graphics.drawable.Drawable
-import android.text.TextPaint
 import android.util.AttributeSet
 import android.view.View
 import java.util.*
@@ -32,7 +28,7 @@ class ChartView: View {
         super.onDraw(canvas)
         val vWidth = width.toFloat()
         val vHeight = height.toFloat()
-        val step = vHeight / 9
+        val step = vWidth / 9
         var height = normalize(values[0], vHeight)
         for(i in 1..9){
             val nHeight = normalize(values[i], vHeight)

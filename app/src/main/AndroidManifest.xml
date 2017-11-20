@@ -21,7 +21,9 @@
         <service
             android:name=".TickService"
             android:enabled="true"
-            android:exported="true"></service>
+            android:exported="true" />
+
+        <activity android:name=".ScrollChartActivity"></activity>
     </application>
 
 </manifest>

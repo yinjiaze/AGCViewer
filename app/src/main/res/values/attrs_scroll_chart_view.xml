@@ -1,0 +1,4 @@
+<resources>
+    <declare-styleable name="ScrollChartView">
+    </declare-styleable>
+</resources>
