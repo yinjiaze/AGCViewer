@@ -37,21 +37,25 @@ class TickService : Service() {
                 Toast.LENGTH_LONG
         ).show()
         tim.schedule(1000, 1000){callback()}
-        return super.onStartCommand(intent, flags, startId)
+        return START_STICKY
     }
-
-    override fun stopService(name: Intent?): Boolean {
-        tim.cancel()
-        return super.stopService(name)
-    }
-
 
     override fun onBind(intent: Intent?): IBinder {
+        Toast.makeText(
+                application,
+                "service on bind",
+                Toast.LENGTH_LONG
+        ).show()
         return LocalBinder()
     }
 
     override fun onUnbind(intent: Intent?): Boolean {
-
+        Toast.makeText(
+                application,
+                "service on unbind",
+                Toast.LENGTH_LONG
+        ).show()
+        tim.cancel()
         return super.onUnbind(intent)
     }
 
